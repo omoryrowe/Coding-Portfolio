@@ -1,8 +1,3 @@
-/*
- -	COP 3330 Final Project
- -	Omory Rowe, Makayla Mckenzie
- */
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;

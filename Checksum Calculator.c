@@ -1,21 +1,13 @@
 /*=============================================================================
-| Assignment: pa02 - Calculating an 8, 16, or 32 bit
+| Calculating an 8, 16, or 32 bit
 | checksum on an ASCII input file
 |
 | Author: Omory Rowe
-| Language: c, c++, Java, GO, Python
+| Language: C
 |
-| To Compile: javac pa02.java
-| gcc -o pa02 pa02.c
-| g++ -o pa02 pa02.cpp
-| go build pa02.go
-| python pa02.py //Caution - expecting input parameters
+| To Compile: gcc -o pa02 pa02.c
 |
-| To Execute: java -> java pa02 inputFile.txt 8
-| or c++ -> ./pa02 inputFile.txt 8
-| or c -> ./pa02 inputFile.txt 8
-| or go -> ./pa02 inputFile.txt 8
-| or python-> python pa02.py inputFile.txt 8
+| To Execute: C -> ./pa02 inputFile.txt 8
 | where inputFile.txt is an ASCII input file
 | and the number 8 could also be 16 or 32
 | which are the valid checksum sizes, all
@@ -23,11 +15,6 @@
 | and program termination
 |
 | Note: All input files are simple 8 bit ASCII input
-|
-| Class: CIS3360 - Security in Computing - Spring 2023
-| Instructor: McAlpin
-| Due Date: per assignment
-|
 +=============================================================================*/
 
 #include <stdio.h>

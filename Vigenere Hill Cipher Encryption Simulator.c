@@ -1,27 +1,17 @@
 /*=============================================================================
-| Assignment: pa01 - Encrypting a plaintext file using the Vigenere cipher
+| Encrypting a plaintext file using the Vigenere cipher
 |
 | Author: Omory Rowe
-| Language: c, c++, Java, go, python
+| Language: C
 |
-| To Compile: javac pa01.java
-| gcc -o pa01 pa01.c
-| g++ -o pa01 pa01.cpp
-| go build pa01.go
+| To Compile: gcc -o pa01 pa01.c
 |
-| To Execute: java -> java pa01 kX.txt pX.txt
-| or c++ -> ./pa01 kX.txt pX.txt
-| or c -> ./pa01 kX.txt pX.txt
-| or go -> ./pa01 kX.txt pX.txt
-| or python -> python3 pa01.py kX.txt pX.txt
+| To Execute: C -> ./pa01 kX.txt pX.txt
 | where kX.txt is the keytext file
 | and pX.txt is plaintext file
 |
 | Note: All input files are simple 8 bit ASCII input
 |
-| Class: CIS3360 - Security in Computing - Spring 2023
-| Instructor: McAlpin
-| Due Date: 03/06/23
 |
 +=============================================================================*/
 

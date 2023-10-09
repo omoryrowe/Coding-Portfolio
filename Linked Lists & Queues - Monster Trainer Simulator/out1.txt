@@ -1,0 +1,11 @@
+IMRAN checks out at 1020 from line 1.
+ADAM checks out at 1710 from line 6.
+CHRISTOPHER checks out at 4880 from line 6.
+MEHMED checks out at 8130 from line 1.
+ORHAN checks out at 104290 from line 15.
+A checks out at 8150 from line 1.
+F checks out at 15800 from line 8.
+E checks out at 23530 from line 5.
+D checks out at 31340 from line 4.
+C checks out at 39230 from line 3.
+B checks out at 47200 from line 2.

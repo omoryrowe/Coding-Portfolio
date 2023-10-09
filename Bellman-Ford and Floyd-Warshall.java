@@ -1,4 +1,4 @@
-//An adjacency matrix method using a Set for vert,and a two-dimensional array of Booleans to store the edges.
+//An adjacency matrix method using a Set for vert and a two-dimensional array of Booleans to store the edges.
 
 import java.io.File;
 import java.io.FileNotFoundException;

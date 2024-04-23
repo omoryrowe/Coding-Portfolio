@@ -1,0 +1,153 @@
+@font-face {
+    font-family: SpaceMono;
+    src: url(../fonts/SpaceMono-Regular.ttf);
+}
+
+body 
+{
+    background-color: #333333;
+    background-image: url(../images/space-background4.jpg);
+    background-repeat: no-repeat;
+    background-size: 2560px 1440px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/*FIRST CONTACT*/
+#title 
+{
+    font-size: 80px;
+    text-align: center;
+    font-family: SpaceMono;
+    color: #FFFFFF;
+    letter-spacing: 12px;
+    text-shadow: 2px 2px 3px black;
+    margin-bottom: 100px;
+    margin-top: 120px;
+}
+
+/*Housing block for login and register*/
+#loginDiv
+{
+    font-size: 30px;
+    padding-bottom: 80px;
+    padding-top: 50px;
+    padding-left: 25px;
+    padding-right: 25px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 15px;
+    width: 400px;
+}
+
+/*Login/Register title*/
+#loginTitle{
+    font-size: 1em;
+    width: 100%;
+    text-align: left;
+    padding-left: 70px;
+    margin-left: 50px;
+    margin-bottom: 2%;
+    font-family: SpaceMono;
+    color: navy;
+    border-left: 5px solid navy;
+    font-weight: bold;
+}
+
+/*all elements on register page*/
+#register-inputs {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+}
+
+/*all elements on login page*/
+#login-inputs {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/*Error message for invalid login*/
+#loginResult{
+    display: inline-block;
+    font-size: 16px;
+    text-align: center;
+    font-family: SpaceMono;
+    color: navy;
+    margin-top: 15px;
+}
+
+/*Feedback message for registering new user*/
+#registerResult{
+    display: inline-block;
+    font-size: 16px;
+    text-align: center;
+    font-family: SpaceMono;
+    color: navy;
+    margin-top: 15px;
+}
+
+/*input text field*/
+input[type="text-field"],input[id="loginPassword"] {
+    color: black;
+    font-size: 16px;
+    border-top: 0px;
+    border-right: 0px;
+    border-left: 0px;
+    border-bottom: 1.5px solid gray;
+    height: 40px;
+    width: 270px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+input:focus {
+    outline: none;
+}
+
+/*Action login and sign up buttons*/
+.buttons
+{
+    font-size: 30px;
+    font-family: SpaceMono;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 5px;
+    padding-right: 80px;
+    padding-left: 80px;
+    background-color: white;
+    color: gray;
+    border: 1px solid gray;
+    transition-duration: 0.3s;
+}
+.buttons:hover{
+    background-color: navy;
+    color: white;
+    opacity: 70%;
+    transition-duration: 0.3s;
+}
+.buttons:active{
+    opacity: 30%;
+}
+
+/*Swap to Sign up and login button*/
+#signup-login {
+	color: gray;
+	text-decoration-line: underline;
+	border: none;
+	font-size: 16px;
+    text-align: center;
+    background-color: white;
+    font-family: Arial;
+    width: 100%;
+}
+#signup-login:hover {
+	color: navy;
+	cursor: pointer;
+}
+
+
+

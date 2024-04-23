@@ -1,0 +1,252 @@
+body {
+    background-color: #2b2b2b;
+    background-image: url('../images/contacts-bg.jpg'); /* Adjust the path accordingly */
+    background-size: cover; /* This property ensures that the image covers the entire background */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    background-position: center; /* Center the image horizontally and vertically */
+    margin: 0; /* Remove default body margin */
+    padding: 0; /* Remove default body padding */
+}
+
+@font-face {
+    font-family: 'SpaceMono';
+    src: url('../fonts/SpaceMono-Regular.ttf') format('truetype'); /* Adjust the path accordingly */
+    font-weight: normal;
+    font-style: normal;
+}
+
+#title {
+    font-size: 40px;
+    width: 100%;
+    text-align: center;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    font-family: 'SpaceMono', Courier, monospace;
+    color: #FFFFFF;
+}
+
+#contacts-container {
+    display: flex;
+    height: 1000px;
+}
+
+.left-divider {
+    padding-top: 10px;
+    padding-left: 300px;
+    margin-right: 200px;
+    float: left;
+    box-sizing: border-box; /* Include padding and border in the total width */
+}
+
+.right-divider {
+    margin-top: 150px;
+    height: 375px;
+    float: left;
+    background-color: #ffffff;
+    border: 1px solid rgb(255, 255, 255);
+    border-radius: 20px;
+    padding: 20px;
+
+}
+
+#mySearchBar {
+    width: 300px;
+    height: 40px;
+    display: block;
+    margin: 0 auto;
+    text-align: left;
+    padding-left: 10px;
+    border-radius: 20px;
+    border: none;
+    outline: none;
+}
+
+.contactItem {
+    width: 100%;
+    height: 35px;
+    display: block;
+    border: none; /* Remove default border */
+    border-bottom: 1px solid #333; /* Add a bottom border */
+    padding: 1px; /* Adjust padding for space around the text */
+    margin-bottom: 10px; /* Adjust margin to control distance from surrounding elements */
+    color: #333;
+    outline: none;
+}
+
+
+#contactTextFirst {
+    text-align: left;
+    border-radius: 0;
+}
+
+#contactTextLast {
+    text-align: left;
+    border-radius: 0;
+}
+
+#contactTextNumber {
+    text-align: left;
+    border-radius: 0;
+}
+
+#contactTextEmail {
+    text-align: left;
+    border-radius: 0;
+}
+
+.underlinedButton {
+    display: inline-block;
+    text-decoration: underline;
+    color: #6e6e6e;
+    cursor: pointer;
+}
+
+.underlinedButton:hover {
+    color: rgb(75, 62, 148);
+}
+
+#logoutButton {
+    width: 75px;
+    height: 35px;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+    border-radius: 20px;
+    border: none;
+    margin-left: 70%;
+    margin-bottom: 4%;
+    font-size: 16px;
+    background: transparent;
+}
+
+#addContactButton {
+    width: 300px;
+    height: 75px;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+    padding-left: 10px;
+    border-radius: 5px;
+    border: 1px solid #333;
+    background: transparent;
+}
+
+#addContactButton:hover {
+    background-color: rgb(50, 34, 141);
+}
+
+.outer-wrapper {
+    margin: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid rgb(255, 255, 255);
+    border-radius: 20px;
+    background-color: #ffffff;
+    height: 600px;
+    max-width: fit-content;
+    max-height: 800px;
+}
+
+.table-wrapper {
+    overflow-y: auto;
+    height: fit-content;
+    margin-top: 22px;
+    max-height: 500px;
+    margin: 15px;
+    padding-bottom: 20px;
+}
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table {
+    width: 100%;
+    max-height: 100%;
+    border-spacing: 0px;
+}
+
+th {
+    top: 0px;
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    font-weight: normal;
+    font-size: 18px;
+    outline: 0.7px solid black;
+    border: 1.5px solid black;
+}
+
+table, th, td {
+    border: 1px solid #000;
+    border-collapse: collapse;
+}
+
+th, td {
+    width: 100px;
+    padding: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+td {
+    text-align: left;
+    font-size: 15px;
+    border: 1px solid rgb(177, 177, 177);
+    padding-left: 20px;
+}
+
+.buttons {
+    font-size: 30px;
+    border-radius: 25px;
+    width: 50%;
+    margin-left: 25%;
+    font-family: 'SpaceMono', sans-serif;
+}
+
+.buttons:hover {
+    background-color: #00d5124f;
+    color: #FFFFFF;
+    opacity: 50%;
+}
+
+input[type="text"],
+input[type="password"] {
+    border-radius: 25px;
+    text-align: center;
+    width: 80%;
+    margin-left: 10%;
+    margin-bottom: 2%;
+    font-family: 'SpaceMono', sans-serif;
+}
+
+#loginTitle,
+#loginResult,
+#userName {
+    display: inline-block;
+    width: 90%;
+    text-align: center;
+    margin-left: 5%;
+    margin-bottom: 2%;
+    font-family: 'SpaceMono', sans-serif;
+}
+
+#loginTitle,
+#loginResult {
+    font-size: 0.8em;
+    color: #95060a;
+}
+
+#userName {
+    width: 80%;
+    margin-left: 10%;
+}
+
+select {
+    width: 30%;
+    margin-left: 35%;
+    margin-top: 2%;
+    font-size: 0.75em;
+    font-family: 'SpaceMono', sans-serif;
+}

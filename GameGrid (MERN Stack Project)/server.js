@@ -1,5 +1,5 @@
 require('dotenv').config();
-const url = process.env.MONGODB_URI;
+const url = 'mongodb+srv://admin:azfKLMEYBvAjReBH@cluster0.m6fnyuj.mongodb.net/';
 const MongoClient = require('mongodb').MongoClient;
 const client = new MongoClient(url);
 client.connect();
@@ -183,7 +183,6 @@ app.post('/api/login', async (req, res, next) => {
 
 const { ObjectId } = require('mongodb');
 
-// Endpoint for sending friend requests
 app.post('/api/friends/send-request', async (req, res) => {
     const { userId, friendId } = req.body;
     const db = client.db("VGReview");
@@ -201,7 +200,13 @@ app.post('/api/friends/send-request', async (req, res) => {
             return;
         }
 
-        // Check if a friend request already exists
+        // Check if a friend request already exists from the sender to the receiver
+        if (receiver.friends && receiver.friends.receivedRequests.includes(userId)) {
+            res.status(400).json({ error: "You already have a pending friend request from this user" });
+            return;
+        }
+
+        // Check if a friend request already exists from the sender to the receiver (reverse check to catch both cases)
         if (sender.friends && sender.friends.sentRequests.includes(friendId)) {
             res.status(400).json({ error: "Friend request already sent" });
             return;
@@ -545,15 +550,58 @@ app.post('/api/searchusers', async (req, res, next) => {
 
 
 app.post('/api/deleteuser', async (req, res, next) => {
-    // incoming: id
-    // outgoing: success message, error
-    const { id } = req.body; // Extracting id from req.body
-    var error = '';
-    var successMessage = '';
+    const { id } = req.body; // Extracting userId from req.body
+    let error = '';
+    let successMessage = '';
 
     try {
         const db = client.db("VGReview");
-        const result = await db.collection('Users').deleteOne({ _id: new ObjectId(id) });
+        const usersCollection = db.collection('Users');
+        const reviewsCollection = db.collection('Reviews');
+        const videoGamesCollection = db.collection('VideoGames');
+
+        // Find the user by userId
+        const user = await usersCollection.findOne({ _id: new ObjectId(id) });
+        if (!user) {
+            error = 'User not found';
+            return res.status(404).json({ error });
+        }
+
+        // Get the user's display name
+        const displayName = user.displayName;
+
+        // Fetch the user's reviews
+        const userReviews = await reviewsCollection.find({ displayName }).toArray();
+
+        // Delete user's reviews from the reviews collection using their display name
+        await reviewsCollection.deleteMany({ displayName });
+
+        // Update game ratings and delete games with zero ratings
+        for (const review of userReviews) {
+            const { videoGameId, rating } = review;
+
+            // Find the game and update its rating and review count
+            const game = await videoGamesCollection.findOne({ videoGameId });
+            if (game) {
+                const { rating: oldRating, reviewCount } = game;
+                const newRating = ((oldRating * reviewCount) - rating) / (reviewCount - 1);
+                const newReviewCount = reviewCount - 1;
+
+                // Update the game's rating and review count in the video games collection
+                await videoGamesCollection.updateOne(
+                    { videoGameId },
+                    { $set: { rating: newRating, reviewCount: newReviewCount } }
+                );
+
+                // If the game has zero reviews after the deletion, delete it from the VideoGames collection
+                if (newReviewCount === 0) {
+                    await videoGamesCollection.deleteOne({ videoGameId });
+                }
+            }
+        }
+
+        // Finally, delete the user
+        const result = await usersCollection.deleteOne({ _id: new ObjectId(id) });
 
         if (result.deletedCount === 1) {
             successMessage = 'User deleted successfully';
@@ -564,7 +612,7 @@ app.post('/api/deleteuser', async (req, res, next) => {
         error = e.toString();
     }
 
-    var ret = { successMessage: successMessage, error: error };
+    const ret = { successMessage, error };
     res.status(200).json(ret);
 });
 
@@ -984,48 +1032,6 @@ app.delete('/api/reviews/delete/:reviewId', async (req, res) => {
 });
 
 
-/*app.post('/api/reviews', async (req, res, next) => {
-    // incoming: displayName, videoGameId, rating
-    // outgoing: error
-
-    const { textBody, rating, videoGameId, displayName } = req.body;
-    console.log(req.body);
-    const newReview = {
-        dateWritten: new Date(), // Set current date as dateCreated
-        textBody: textBody,
-        rating: rating,
-        videoGameId: videoGameId,
-        displayName: displayName
-    };
-    var error = '';
-
-    try {
-        const db = client.db("VGReview");
-        await db.collection('Reviews').insertOne(newReview);
-        const result = await db.collection('VideoGames').findOne({ videoGameId: videoGameId });
-        if (result) {
-            const ovrRating = result.rating;
-            const reviewCount = result.reviewCount;
-            const newRating = ((ovrRating * reviewCount) + rating) / (reviewCount + 1);
-            await db.collection('VideoGames').updateOne({ videoGameId: videoGameId }, { $set: { rating: newRating, reviewCount: (reviewCount + 1) } });
-            error = 'Game found';
-            var ret = { newRating: newRating, error: error };
-        } else {
-            const newGame = {
-                videoGameId: videoGameId,
-                rating: rating,
-                reviewCount: 1
-            };
-            await db.collection('VideoGames').insertOne(newGame);
-            error = "Game added";
-            var ret = { error: error };
-        }
-    } catch (e) {
-        error = e.toString();
-    }
-
-    res.status(200).json(ret);
-});*/
 
 app.get('/api/user/games/:userId', async (req, res) => {
     const userId = req.params.userId;

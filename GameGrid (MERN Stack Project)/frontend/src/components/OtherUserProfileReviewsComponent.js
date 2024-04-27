@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 
-const ProfileReviewsComponent = ({ formToggler }) => {
+const OtherUserProfileReviewsComponent = ({displayName}) => {
   const [reviewsFullInfo, setReviewsFullInfo] = useState([]);
   const [error, setError] = useState(null);
 
@@ -13,7 +13,7 @@ const ProfileReviewsComponent = ({ formToggler }) => {
     }
 
     loadReviews();
-  }, []);
+  }, [displayName]);
 
   const parseCoverUrl = (url) => {
     return url.replace('t_thumb', 't_cover_big');
@@ -36,12 +36,11 @@ const ProfileReviewsComponent = ({ formToggler }) => {
 
   const fetchReviews = async () => {
 
-    let userData = JSON.parse(localStorage.getItem('user_data'));
-    let userDisplayName = userData.displayName;
-
+    // let userData = JSON.parse(localStorage.getItem('user_data'));
+    // let userDisplayName = userData.displayName;
 
     try {
-      const response = await fetch(buildPath("api/reviews/search/" + userDisplayName));
+      const response = await fetch(buildPath("api/reviews/search/" + displayName));
 
       let res = JSON.parse(await response.text());
 
@@ -51,6 +50,7 @@ const ProfileReviewsComponent = ({ formToggler }) => {
       }
 
       _reviews = res.reviews;
+      console.log(_reviews);
 
       let arr = [];
       for (let i = 0; i < _reviews.length; ++i) {
@@ -134,7 +134,7 @@ const ProfileReviewsComponent = ({ formToggler }) => {
   return (
     <div className="me-4">
       <div className="d-flex justify-content-between ">
-        <span className="my-auto fw-semibold fs-3">Your Reviews</span>
+        <span className="my-auto fw-semibold fs-3">{displayName}'s Reviews</span>
         {/* <button onClick={() => formToggler('reviews')} className="btn btn-primary text-white fw-semibold">All</button> */}
       </div>
 
@@ -176,4 +176,4 @@ const ProfileReviewsComponent = ({ formToggler }) => {
   );
 }
 
-export default ProfileReviewsComponent;
+export default OtherUserProfileReviewsComponent;

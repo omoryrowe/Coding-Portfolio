@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from 'react-router-dom';
 import UserLookUp from "./UserLookUp";
 
 const ProfileFriendsComponent = ({ formToggler }) => {
@@ -52,7 +53,19 @@ const ProfileFriendsComponent = ({ formToggler }) => {
       const response = await fetch(buildPath("api/friends/" + userId));
 
       let res = JSON.parse(await response.text());
-      setFriends(res.friends);
+
+      let arr = []
+
+      // purges friend list of null entries
+      for(let i = 0; i < res.friends.length; ++i) {
+        if(res.friends[i] !== null) {
+          arr.push(res.friends[i]);
+        }
+      }
+
+      // console.log(arr);
+
+      setFriends(arr);
     } catch (e) {
       alert(e.toString() + "fetchFriends()");
       return;
@@ -182,24 +195,38 @@ const ProfileFriendsComponent = ({ formToggler }) => {
       </div>
 
       <hr className="mt-2 opacity-50" />
-      <div className="overflow-scroll" style={{height: '60vh'}}>
+      <div className="overflow-scroll" style={{ height: '60vh' }}>
         {friendRequests.map((friendRequest) => (
           <div className="d-flex justify-content-between mb-3">
-            <div className=""> 
-              <img className=" " width="" height="" src="profile.svg" style={{ height: '80px', width: 'auto' }} />
-              <span className="align-middle mx-4 fw-semibold fs-4">{friendRequest.displayName}</span>
+            <div className="">
+              <Link className="link" to={{
+                pathname: `/Profile/${friendRequest.displayName}`,
+              }}>
+                <img className=" " width="" height="" src="/user.svg" style={{ height: '40px', width: 'auto' }} />
+                <span className="mx-4 align-middle fw-semibold fs-4">
+                  {friendRequest.displayName}
+                </span>
+              </Link>
+              {/* <img className=" " width="" height="" src="/user.svg" style={{ height: '40px', width: 'auto' }} />
+              <span className="align-middle mx-4 fw-semibold fs-4">{friendRequest.displayName}</span> */}
             </div>
             <div className="my-auto">
-              <button onClick={() => acceptFriendRequest(friendRequest.id)} className="btn btn-primary my-auto text-white me-2">Accept</button>
-              <button onClick={() => declineFriendRequest(friendRequest.id)} className="btn btn-danger my-auto text-white">Decline</button>
+              <button onClick={() => acceptFriendRequest(friendRequest.id)} className="btn btn-primary my-auto text-white me-2 fw-semibold">Accept</button>
+              <button onClick={() => declineFriendRequest(friendRequest.id)} className="btn btn-danger my-auto text-white fw-semibold">Decline</button>
             </div>
           </div>
         ))}
         {friends.map((friend) => (
           <div className="d-flex justify-content-between mb-3">
             <div className="">
-              <img className=" " width="" height="" src="profile.svg" style={{ height: '80px', width: 'auto' }} />
-              <span className="mx-4 align-middle fw-semibold fs-4">{friend.displayName}</span>
+              <Link className="link" to={{
+                pathname: `/Profile/${friend.displayName}`,
+              }}>
+                <img className=" " width="" height="" src="/user.svg" style={{ height: '40px', width: 'auto' }} />
+                <span className="mx-4 align-middle fw-semibold fs-4">
+                  {friend.displayName}
+                </span>
+              </Link>
             </div>
             <button onClick={() => removeFriendPrompt(friend.displayName, friend.id)} className="btn btn-danger text-white fw-semibold my-auto">Remove</button>
           </div>

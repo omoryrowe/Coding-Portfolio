@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import ReviewsIU from "./ReviewsUI";
 import StarRating from './StarRating'; // Adjust the path as per your project structure
+import Login from "./Login"; // Import the Login component
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Slide } from 'react-toastify';
 
 function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage, gameCreators, gamePlatforms }) {
   const [reviewText, setReviewText] = useState("");
@@ -11,31 +15,63 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
   const [formattedReleaseDate, setFormattedReleaseDate] = useState('');
   const [reviewStats, setReviewStats] = useState({ reviewCount: 0, rating: 0 });
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track user login status
-  const app_name = 'g26-big-project-6a388f7e71aa';
-  console.log(gamePlatforms[0].props.children);
+  const [buttonText, setButtonText] = useState("Add to list");
+  const [gameInLibrary, setGameInLibrary] = useState(false);
+  
+
 
   useEffect(() => {
     var utcSeconds = gameReleaseDate;
     var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
     d.setUTCSeconds(utcSeconds);
-
+  
     var date = d.toLocaleString("en-US", {
       year: "numeric",
       month: "short",
       day: "2-digit",
     });
     setFormattedReleaseDate(date);
-
+  
     fetchReviewStats();
-
+  
     const userData = localStorage.getItem('user_data');
     if (userData) {
       setIsLoggedIn(true);
+  
+      // Fetch user's games to check if the current game is in the library
+      const userDataObj = JSON.parse(userData);
+      const userId = userDataObj.id;
+  
+      const fetchUserGames = async () => {
+        try {
+          const response = await fetch(buildPath(`api/user/games/${userId}`));
+          if (!response.ok) {
+            throw new Error('Failed to fetch user games');
+          }
+          const data = await response.json();
+          const userGames = data.games || [];
+          // Check if the current game is in the user's library
+          const gameIsInLibrary = userGames.includes(gameId);
+          setGameInLibrary(gameIsInLibrary);
+          
+          if (gameIsInLibrary === true) {
+            setButtonText("Remove from list");
+          } else {
+            setButtonText("Add to list");
+          }
+
+        } catch (error) {
+          console.error('Error fetching user games:', error);
+        }
+      };
+  
+      fetchUserGames();
     } else {
       setIsLoggedIn(false);
     }
-
   }, [gameReleaseDate]);
+
+  const app_name = 'g26-big-project-6a388f7e71aa';
 
   function buildPath(route) {
     console.log("ENVIRONMENT " + process.env.NODE_ENV);
@@ -54,10 +90,41 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
 
   const submitReview = async () => {
     try {
+
+      if (rating === 0) {
+        toast.info("Please select a rating before submitting your review.", {
+          position: "top-left",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Slide,
+          });
+        return; // Prevent submission if no rating is selected
+      }
+      
+      if ((reviewText.trim().split(/\s+/).length < 1) || (reviewText === '')) {
+        toast.info("Please write a review.", {
+          position: "top-left",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Slide,
+          });
+        return; // Prevent submission if review text has less than 5 words
+      }
+  
       const userData = localStorage.getItem('user_data');
       const userDataObj = JSON.parse(userData);
       const displayName = userDataObj.displayName;
-
+  
       // Call addGame API to add the game to the user's library
       const addGameResponse = await fetch(buildPath("api/addGame"), {
         method: 'POST',
@@ -69,11 +136,11 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
           videoGameId: gameId
         })
       });
-
+  
       if (!addGameResponse.ok) {
         throw new Error('Failed to add game to library');
       }
-
+  
       // Submit review after adding the game to the library
       const response = await fetch(buildPath("api/reviews"), {
         method: 'POST',
@@ -88,30 +155,31 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
           videoGameName: gameName
         })
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to submit review');
       }
-
+  
       const data = await response.json();
-
+  
       if (data.error) {
         throw new Error(data.error);
       }
-
+  
       setReviews([...reviews, {
         displayName: displayName,
         textBody: reviewText,
         rating: rating
       }]);
-
+  
       toggleOverlay();
     } catch (error) {
       console.error('Error submitting review:', error);
     }
-
+  
     window.location.reload();
   };
+  
 
   const fetchReviewStats = async () => {
     try {
@@ -145,6 +213,7 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
   const platformsString = gamePlatforms.map(platform => platform.props.children).join(", ");
 
   const addToLibrary = async () => {
+    
     try {
       const userData = localStorage.getItem('user_data');
       const userDataObj = JSON.parse(userData);
@@ -166,24 +235,84 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
   
       const data = await addGameResponse.json();
 
-      if (data.error === "Game already in library!") {
+      if (data.error === "Game successfully added to your library!") {
         // Display a notification that the game is already in the library
-        alert("This game is already in your library!");
-      } else {
-        // Display a notification that the game has been added to the library
-        alert("Game successfully added to your library!");
-      }
+        toast.info("Game successfully added to your library!", {
+          position: "top-left",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Slide,
+          });
+      } 
 
       if (data.error) {
         throw new Error(data.error);
-      }
-  
-      
-  
+      }  
       console.log('Game added to library successfully:', data);
+      setButtonText('Remove from list');
+      setGameInLibrary(true);
     } catch (error) {
-      console.error('Error adding game to library:', error);
+      setButtonText('Remove from list');
+      setGameInLibrary(true);
     }
+  };
+
+  const removeFromLibrary = async () => {
+
+    try {
+
+      const userData = localStorage.getItem('user_data');
+      const userDataObj = JSON.parse(userData);
+      const userId = userDataObj.id;
+
+      const deleteGameResponse = await fetch(buildPath(`api/user/games/${userId}/${gameId}`), {
+        method: 'DELETE'
+      });
+  
+      if (!deleteGameResponse.ok) {
+        throw new Error('Failed to remove game from library');
+      }
+
+      toast.info("Game removed from your library!", {
+        position: "top-left",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Slide,
+        });
+      setGameInLibrary(false);
+      setButtonText('Add to list');
+    } catch(error) {
+      console.error(error);
+    }
+
+
+
+  }
+
+  const addRemoveGame = async () => {
+
+    if (gameInLibrary) {
+      removeFromLibrary();
+    } else {
+      addToLibrary();
+    }
+
+  }
+
+  const [showLoginOverlay, setShowLoginOverlay] = useState(false);
+
+  const handleLoginClick = () => {
+    setShowLoginOverlay(true);
   };
 
   return (
@@ -217,6 +346,13 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
         </div>
       )}
 
+      {showLoginOverlay && (
+        <div className="review-overlay">
+            <Login onExitClick={() => setShowLoginOverlay(false)} />
+        </div>
+      )}
+
+
       <div className="details-container text-white row px-12 mt-4">
         <div className="col-md-3">
           <img className="rounded w-100" src={gameImage} alt={gameName} />
@@ -225,14 +361,14 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
             <p className="font-weight-bold">{reviewStats.reviewCount} total reviews</p>
             <div className="d-flex">
             <img src="/mario-star.png" style={{ width: '20px' }} />
-              <p className="font-weight-bold ms-1">{reviewStats.rating !== 0 ? reviewStats.rating.toFixed(2) + " / 5" : "Unrated"}</p>
+            <p className="font-weight-bold ms-1">{reviewStats.rating !== null ? (reviewStats.rating !== 0 ? reviewStats.rating.toFixed(2) + " / 5" : "Unrated") : "Unrated"}</p>
             </div>
           </div>
         </div>
 
         <div className="col-md-6">
           <div className="details-content">
-            <h1 className="display-2 fw-bold text-uppercase">{gameName} <span className="fs-6" style={{fontSize: 'small', fontWeight: 'normal'}}>{formattedReleaseDate}</span></h1>
+            <h1 className="display-2 fw-bold text-uppercase fs-1">{gameName} <span className="fs-6" style={{fontSize: 'small', fontWeight: 'normal'}}>{formattedReleaseDate}</span></h1>
             <p className="fs-6">{gameSummary}</p>
             <div>
               <h6>Developed by:</h6>
@@ -248,18 +384,33 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
         <div className="col-md-3 d-flex flex-column justify-content-center align-items-center mx-auto my-auto">
           {isLoggedIn ? (
             <>
-              <button className="btn btn-primary text-white w-10 fs-5 mb-3 mt-3" style={{ width: '150px' }} onClick={toggleOverlay}>Add a Review</button>
-              <button className="btn btn-primary text-white w-10 fs-5 mb-3 mt-3" style={{ width: '150px' }} onClick={addToLibrary}>Add to List</button>
+              <button className="btn btn-primary text-white w-10 fs-5 mb-3 mt-3" style={{ width: '175px' }} onClick={toggleOverlay}>Add a Review</button>
+              <button className="btn btn-primary text-white w-10 fs-5 mb-3 mt-3" style={{ width: '175px' }} onClick={addRemoveGame}>{buttonText}</button>
             </>
           ) : (
             <>
-              <p>Login to log, and review.</p>              
+              <p className="btn btn-primary text-white w-10 fs-5 mb-3 mt-3" onClick={handleLoginClick}>Login to log, and review.</p> {/* Added onClick event */}           
             </>
           )}
         </div>
 
         <ReviewsIU />
+        
       </div>
+      <ToastContainer
+        position="top-left"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        transition={Slide} // Pass Slide component as the value for the transition prop
+      />
+
     </>
   );
 }

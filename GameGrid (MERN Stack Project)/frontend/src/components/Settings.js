@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { redirect } from "react-router-dom";
 
 function Settings({ onExitClick, currentDisplayName, currentEmail }) {
   let newUserPassword = '';
@@ -39,8 +38,15 @@ function Settings({ onExitClick, currentDisplayName, currentEmail }) {
     formErrors["passwords"] = "";
     formErrors["email"] = "";
 
-    if (newPassword !== newPasswordRetype) {
+    if (newPassword.length === 0 && newPasswordRetype.length === 0) {
+      formIsValid = true;
+    }
+    else if (newPassword !== newPasswordRetype) {
       formErrors["passwords"] = " - Passwords must match";
+      formIsValid = false;
+    }
+    else if(!(/^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[a-zA-Z0-9]).{8,}$/.test(newPassword))) {
+      formErrors["passwords"] = "Password must be at least 8 characters long and contain at least 1 special character."
       formIsValid = false;
     }
 
@@ -58,7 +64,7 @@ function Settings({ onExitClick, currentDisplayName, currentEmail }) {
     event.preventDefault();
     newUserPassword = userNewPasswordRef.value;
 
-    let obj = { email: currentEmail, newEmail: userEmailInputRef.value, newPassword: newUserPassword, newDisplayName: userDisplayNameInputRef.value };
+    let obj = { email: currentEmail, newEmail: userEmailInputRef.value, newPassword: newUserPassword, newDisplayName: currentDisplayName };
     let js = JSON.stringify(obj);
     console.log("Printing JS: " + js);
     setSuccessMessage('');
@@ -110,12 +116,9 @@ function Settings({ onExitClick, currentDisplayName, currentEmail }) {
         { method: 'POST', body: js, headers: { 'Content-Type': 'application/json'} });
       console.log("Response: " + response.ok);
 
-
-      let res = JSON.parse(await response.text())
-      // console.log("Delete User Result: " + JSON.stringify(res));
+      let res = JSON.parse(await response.text());
 
       if(res.successMessage) {
-        window.alert("Account Deleted");
         window.location.href = '/';
         return;
       }
@@ -153,9 +156,9 @@ function Settings({ onExitClick, currentDisplayName, currentEmail }) {
 
           <div className="form-group">
 
-            <label className="fw-semibold fs-4">Display Name</label><br />
+            {/* <label className="fw-semibold fs-4">Display Name</label><br />
             <input className="fs-5" type="text" id="displayName" value={nameText} placeholder="Enter your display name"
-              onChange={(e) => setNameText(e.target.value)} ref={(c) => userDisplayNameInputRef = c} /><br />
+              onChange={(e) => setNameText(e.target.value)} ref={(c) => userDisplayNameInputRef = c} /><br /> */}
 
             <label className="fw-semibold fs-4">Email</label><br />
             <input className="fs-5" type="text" id="email" value={emailText} placeholder="Enter your email"
